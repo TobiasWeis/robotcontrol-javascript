@@ -1,0 +1,42 @@
+<html>
+    <head>
+        <script src="./jquery-3.3.1.min.js"></script>
+    </head>
+    <body>
+
+        <h1>Joystick control</h1>
+        <div id="zone_joystick1" style="position:absolute;left:100px;top:100px;width:100px;height:100px;background-color:#ccc;"></div>
+
+        <script src="./nipplejs/dist/nipplejs.min.js"></script>
+        <script>
+            var options = {
+                zone: document.getElementById('zone_joystick1'),
+                mode:"dynamic",
+                color:"blue",
+                restJoystick:false,
+                restOpacity:50,
+            };
+            var manager = nipplejs.create(options);
+
+            manager.on('added', function(evt, nipple){
+                /*
+                nipple.on('start move end dir plain', function(evt){
+                    alert(evt);
+                });
+                */
+                nipple.on('move', function(evt,data){
+                    console.log(data.force+"-"+data.angle.degree);
+                    $.ajax({
+                        url: "http://localhost:5000/test",
+                        dataType:'jsonp'
+                    }).then(function(returndata){
+                        console.log(returndata);
+                    });
+                });
+            }).on('removed', function(evt, nipple){
+                nipple.off('start move end dir plain');
+            });
+        </script>
+
+    </body>
+</html>
