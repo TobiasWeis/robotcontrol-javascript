@@ -1,14 +1,20 @@
 <html>
     <head>
-        <script src="./jquery-3.3.1.min.js"></script>
+        <link rel="stylesheet" type="text/css" href="css/main.css">
+        <script src="./js/jquery-3.3.1.min.js"></script>
     </head>
     <body>
 
         <h1>Joystick control</h1>
-        <div id="zone_joystick1" style="position:absolute;left:100px;top:100px;width:100px;height:100px;background-color:#ccc;"></div>
+        <div class="controllerzone">
+            <div id="zone_joystick1" class="joystickzone-left"></div>
+            <div id="zone_joystick2" class="joystickzone-right"></div>
+        </div>
 
-        <script src="./nipplejs/dist/nipplejs.min.js"></script>
+
+        <script src="./js/nipplejs/dist/nipplejs.min.js"></script>
         <script>
+            //----------------------- LEFT JOYSTICK
             var options = {
                 zone: document.getElementById('zone_joystick1'),
                 mode:"dynamic",
@@ -36,6 +42,37 @@
             }).on('removed', function(evt, nipple){
                 nipple.off('start move end dir plain');
             });
+
+
+            //----------------------- RIGHT JOYSTICK
+            var options = {
+                zone: document.getElementById('zone_joystick2'),
+                mode:"dynamic",
+                color:"red",
+                restJoystick:false,
+                restOpacity:50,
+            };
+            var manager2 = nipplejs.create(options);
+
+            manager2.on('added', function(evt, nipple){
+                /*
+                nipple.on('start move end dir plain', function(evt){
+                    alert(evt);
+                });
+                */
+                nipple.on('move', function(evt,data){
+                    console.log(data.force+"-"+data.angle.degree);
+                    $.ajax({
+                        url: "http://localhost:5000/test",
+                        dataType:'jsonp'
+                    }).then(function(returndata){
+                        console.log(returndata);
+                    });
+                });
+            }).on('removed', function(evt, nipple){
+                nipple.off('start move end dir plain');
+            });
+
         </script>
 
     </body>
