@@ -5,13 +5,33 @@
     </head>
     <body>
 
-        <h1>Joystick control</h1>
         <div class="controllerzone">
             <div id="zone_joystick1" class="joystickzone-left"></div>
+            <div id="infozone" class="infozone">
+                <h1>Robot control</h1>
+            </div>
             <div id="zone_joystick2" class="joystickzone-right"></div>
         </div>
 
 
+        <!-- get and display robot info -->
+        <script type="text/javascript">
+            var start = new Date;
+
+            setInterval(function(){
+                $.ajax({
+                    url: "http://"+location.host+":5000/status",
+                    dataType:'jsonp',
+                    jsonpCallback: 'callback',
+                    type:'GET',
+                    success: function(data){
+                    console.log(data);
+                    //$('#infozone').text(returndata);
+                    }});
+            }, 1000);
+        </script>
+
+        <!-- Joyticks -->
         <script src="./js/nipplejs/dist/nipplejs.min.js"></script>
         <script>
             //----------------------- LEFT JOYSTICK
@@ -26,11 +46,6 @@
             var manager = nipplejs.create(options);
 
             manager.on('added', function(evt, nipple){
-                /*
-                nipple.on('start move end dir plain', function(evt){
-                    alert(evt);
-                });
-                */
                 nipple.on('move', function(evt,data){
                     console.log(data);
                     $.ajax({
@@ -72,7 +87,7 @@
                 nipple.on('move', function(evt,data){
                     console.log(data.distance+"-"+data.angle.degree);
                     $.ajax({
-                        url: "http://localhost:5000/test",
+                        url: "http://"+location.host+":5000/right/"+(data.distance/options.size)+"/"+data.angle.degree,
                         dataType:'jsonp'
                     }).then(function(returndata){
                         console.log(returndata);

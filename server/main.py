@@ -1,20 +1,23 @@
 #!/usr/bin/python
 """
-We are using a small REST server to control our robot
+We are using a small REST server to control our robot.
 """
 from flask import Flask, jsonify
 import math
 from multiprocessing import Process, Queue
 
-from Linear import *
+try:
+    from Linear import *
+    linear = Linear(q)
+    linear.start()
+except:
+    print "Could not import robot"
+
 
 app = Flask(__name__)
 q = Queue()
 
-linear = Linear(q)
-linear.start()
 
-# FIXME: put this in another file later
 def map_dist_angle(distance, angle):
     """
     map distance and angle values to independent x/y axis values,
@@ -28,27 +31,29 @@ def map_dist_angle(distance, angle):
 
 @app.route('/')
 def index():
-    return "Hello World"
+    return "Robot-Control"
 
-@app.route('/left/<distance>/<angle>')
-def left(distance,angle):
+@app.route('/axis/<num>/<distance>/<angle>')
+def left(num,distance,angle):
     """
-    inputs of the left virtual joystick
-    - when the user lets go of it, it will send a 0,0<
+    inputs of the virtual joysticks
+    - when the user lets go of it, it will send a 0,0
+
     """
-    distance = float(distance)
-    angle = float(angle)
+    x,y = map_dist_angle(float(distance), float(angle))
 
-    x,y = map_dist_angle(distance, angle)
-    #print "Inputs: DISTANCE: ",distance,",ANGLE: ",angle,", X:",x,", Y:",y
-
-    # put it in queue for Linear to receive
+    # put it in queue for Robot-class to receive
     q.put(x)
-
-    #linear.move(x)
 
     ret = "OK"
     return jsonify(ret)
+
+@app.route('/status')
+def status():
+    status = {}
+    status["Test1"] = "test1"
+    status["Test2"] = "test2"
+    return jsonify(test="Test")
 
 if __name__ == "__main__":
     app.run(debug=True, host='0.0.0.0')
