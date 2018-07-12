@@ -9,6 +9,8 @@
             <div id="zone_joystick1" class="joystickzone-left"></div>
             <div id="infozone" class="infozone">
                 <h1>Robot control</h1>
+                <div id="statuszone" class="statuszone">
+                </div>
             </div>
             <div id="zone_joystick2" class="joystickzone-right"></div>
         </div>
@@ -21,13 +23,23 @@
             setInterval(function(){
                 $.ajax({
                     url: "http://"+location.host+":5000/status",
-                    dataType:'jsonp',
-                    jsonpCallback: 'callback',
+                    dataType:'json',
                     type:'GET',
                     success: function(data){
-                    console.log(data);
-                    //$('#infozone').text(returndata);
-                    }});
+                        //console.log(data);
+                        txt = "";
+                        for(var key in data){
+                            if(data.hasOwnProperty(key)){
+                                txt += key + ":" + data[key] + "<br />";
+                            }
+                        }
+                        $('#statuszone').html(txt);
+                    },
+                    error: function(){
+                        $('#statuszone').html("Server is offline");
+                    }
+                });
+
             }, 1000);
         </script>
 
@@ -50,7 +62,7 @@
                     console.log(data);
                     $.ajax({
                         url: "http://"+location.host+":5000/left/"+(data.distance/options.size)+"/"+data.angle.degree,
-                        dataType:'jsonp'
+                        dataType:'json'
                     }).then(function(returndata){
                         console.log(returndata);
                     });
@@ -58,7 +70,7 @@
             }).on('removed', function(evt, nipple){
             $.ajax({
                 url: "http://"+location.host+":5000/left/0.0/0.0",
-                    dataType:'jsonp'
+                    dataType:'json'
                 }).then(function(returndata){
                     console.log(returndata);
                 });

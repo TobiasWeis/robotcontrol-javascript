@@ -3,7 +3,9 @@
 We are using a small REST server to control our robot.
 """
 from flask import Flask, jsonify
+from flask_cors import CORS
 import math
+import json
 from multiprocessing import Process, Queue
 
 try:
@@ -15,6 +17,8 @@ except:
 
 
 app = Flask(__name__)
+CORS(app)
+
 q = Queue()
 
 
@@ -53,7 +57,7 @@ def status():
     status = {}
     status["Test1"] = "test1"
     status["Test2"] = "test2"
-    return jsonify(test="Test")
+    return jsonify(status)
 
 if __name__ == "__main__":
     app.run(debug=True, host='0.0.0.0')
