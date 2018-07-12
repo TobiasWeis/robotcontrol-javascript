@@ -18,6 +18,7 @@
             var options = {
                 zone: document.getElementById('zone_joystick1'),
                 mode:"dynamic",
+                size:100,
                 color:"blue",
                 restJoystick:false,
                 restOpacity:50,
@@ -31,15 +32,22 @@
                 });
                 */
                 nipple.on('move', function(evt,data){
-                    console.log(data.force+"-"+data.angle.degree);
+                    console.log(data);
                     $.ajax({
-                        url: "http://localhost:5000/test",
+                        url: "http://localhost:5000/left/"+(data.distance/options.size)+"/"+data.angle.degree,
                         dataType:'jsonp'
                     }).then(function(returndata){
                         console.log(returndata);
                     });
                 });
             }).on('removed', function(evt, nipple){
+            $.ajax({
+                url: "http://localhost:5000/left/0.0/0.0",
+                    dataType:'jsonp'
+                }).then(function(returndata){
+                    console.log(returndata);
+                });
+
                 nipple.off('start move end dir plain');
             });
 
@@ -49,6 +57,7 @@
                 zone: document.getElementById('zone_joystick2'),
                 mode:"dynamic",
                 color:"red",
+                size:100,
                 restJoystick:false,
                 restOpacity:50,
             };
@@ -61,7 +70,7 @@
                 });
                 */
                 nipple.on('move', function(evt,data){
-                    console.log(data.force+"-"+data.angle.degree);
+                    console.log(data.distance+"-"+data.angle.degree);
                     $.ajax({
                         url: "http://localhost:5000/test",
                         dataType:'jsonp'
