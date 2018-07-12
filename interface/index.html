@@ -34,7 +34,7 @@
                 nipple.on('move', function(evt,data){
                     console.log(data);
                     $.ajax({
-                        url: "http://localhost:5000/left/"+(data.distance/options.size)+"/"+data.angle.degree,
+                        url: "http://"+location.host+":5000/left/"+(data.distance/options.size)+"/"+data.angle.degree,
                         dataType:'jsonp'
                     }).then(function(returndata){
                         console.log(returndata);
@@ -42,7 +42,7 @@
                 });
             }).on('removed', function(evt, nipple){
             $.ajax({
-                url: "http://localhost:5000/left/0.0/0.0",
+                url: "http://"+location.host+":5000/left/0.0/0.0",
                     dataType:'jsonp'
                 }).then(function(returndata){
                     console.log(returndata);
