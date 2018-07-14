@@ -9,19 +9,19 @@ import math
 import json
 from multiprocessing import Process, Queue
 
+q = Queue()
 try:
     from Linear import *
     linear = Linear(q)
     linear.start()
 except:
-    print "Could not import robot"
+    print("Could not import robot")
 
 
 app = Flask(__name__)
 CORS(app)
 socketio = SocketIO(app)
 
-q = Queue()
 
 
 def map_dist_angle(distance, angle):
@@ -58,6 +58,7 @@ def send_status():
 def control(message):
     data = message["data"]
     if "left" in data.keys():
+        print "LEFT!"
         distance = data["left"][0]
         angle = data["left"][1]
         x,y = map_dist_angle(float(distance), float(angle))
@@ -93,4 +94,4 @@ def status():
 
 if __name__ == "__main__":
     #app.run(debug=True, host='0.0.0.0')
-    socketio.run(app)
+    socketio.run(app, host="0.0.0.0")
