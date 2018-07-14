@@ -16,8 +16,8 @@
                 </div>
                 <div id="buttonzone" class="buttonzone">
                     <!-- primary (blue), action (green), highlight (orange), caution (red), royal (purple) -->
-                    <a href="#" class="button button-circle button-action" style="float:left;">Blue Circle</a>
-                    <a href="#" class="button button-circle button-primary" style="float:right;">Blue Circle</a>
+                    <a href="#" id="button-left" class="button button-circle button-action" style="float:left;">A</a>
+                    <a href="#" id="button-right" class="button button-circle button-primary" style="float:right;">B</a>
                 </div>
                 <br style="clear:both;" />
             </div>
@@ -37,6 +37,10 @@
 
 
             var socket_control = io.connect('http://'+location.host+":5000/control")
+
+            <!-- add on-click-listeners to the buttons -->
+            $('#button-left').click(function(){socket_control.emit('control', {data:{"A":1}})});
+            $('#button-right').click(function(){socket_control.emit('control', {data:{"B":1}})});
         </script>
 
         <!-- Joyticks -->

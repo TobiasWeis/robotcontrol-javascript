@@ -68,6 +68,10 @@ def control(message):
     elif "right" in data.keys():
         distance = data["right"][0]
         angle = data["right"][1]
+    elif "A" in data.keys():
+        print "Button A pressed"
+    elif "B" in data.keys():
+        print "Button B pressed"
 
 
 @app.route('/axis/<num>/<distance>/<angle>')
