@@ -66,7 +66,7 @@ def control(message):
         distance = data["right"][0]
         angle = data["right"][1]
         x,y = map_dist_angle(float(distance), float(angle))
-        q.put("right",x,y)
+        q.put(("right",x,y))
     elif "A" in data.keys():
         q.put("a")
     elif "B" in data.keys():
