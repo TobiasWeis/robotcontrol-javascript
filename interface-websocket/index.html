@@ -40,8 +40,8 @@
             var socket_control = io.connect('http://'+location.host+":5000/control")
 
             <!-- add on-click-listeners to the buttons -->
-            $('#button-left').tap(function(){socket_control.emit('control', {data:{"A":1}})});
-            $('#button-right').tap(function(){socket_control.emit('control', {data:{"B":1}})});
+            $('#button-left').on('click', function(){socket_control.emit('control', {data:{"A":1}})});
+            $('#button-right').on('click', function(){socket_control.emit('control', {data:{"B":1}})});
         </script>
 
         <!-- Joyticks -->
