@@ -5,6 +5,7 @@
         <link rel="stylesheet" type="text/css" href="css/button.css">
         <script src="./js/jquery-3.3.1.min.js"></script>
         <script src="./js/socket.io.js"></script>
+        <script src="./js/nipplejs/dist/nipplejs.js"></script>
     </head>
     <body>
 
@@ -39,12 +40,11 @@
             var socket_control = io.connect('http://'+location.host+":5000/control")
 
             <!-- add on-click-listeners to the buttons -->
-            $('#button-left').click(function(){socket_control.emit('control', {data:{"A":1}})});
-            $('#button-right').click(function(){socket_control.emit('control', {data:{"B":1}})});
+            $('#button-left').tap(function(){socket_control.emit('control', {data:{"A":1}})});
+            $('#button-right').tap(function(){socket_control.emit('control', {data:{"B":1}})});
         </script>
 
         <!-- Joyticks -->
-        <script src="./js/nipplejs/dist/nipplejs.js"></script>
         <script>
             //----------------------- LEFT JOYSTICK
             var options = {
