@@ -1,0 +1,83 @@
+<html>
+    <head>
+        <link rel="stylesheet" type="text/css" href="css/main.css">
+        <script src="./js/jquery-3.3.1.min.js"></script>
+        <script src="./js/socket.io.js"></script>
+    </head>
+    <body>
+
+        <div class="controllerzone">
+            <div id="zone_joystick1" class="joystickzone-left"></div>
+            <div id="infozone" class="infozone">
+                <h1>Robot control</h1>
+                <div id="statuszone" class="statuszone">
+                </div>
+            </div>
+            <div id="zone_joystick2" class="joystickzone-right"></div>
+        </div>
+
+
+        <!-- setup sockets and periodic status requests -->
+        <script type="text/javascript">
+            var socket_status = io.connect('http://'+location.host+":5000/status")
+            socket_status.on('status', function(msg){
+                $('#statuszone').text("Received:" + msg.data);
+            });
+            setInterval(function(){
+                socket_status.emit('request');
+            }, 1000);
+
+
+            var socket_control = io.connect('http://'+location.host+":5000/control")
+        </script>
+
+        <!-- Joyticks -->
+        <script src="./js/nipplejs/dist/nipplejs.min.js"></script>
+        <script>
+            //----------------------- LEFT JOYSTICK
+            var options = {
+                zone: document.getElementById('zone_joystick1'),
+                mode:"dynamic",
+                size:100,
+                color:"blue",
+                restJoystick:false,
+                restOpacity:50,
+                fadeTime:0,
+            };
+            var manager = nipplejs.create(options);
+
+            manager.on('added', function(evt, nipple){
+                nipple.on('move', function(evt,data){
+                    socket_control.emit('control', {data:{"left":[(data.distance/options.size), data.angle.degree]}});
+                });
+            }).on('removed', function(evt, nipple){
+                socket_control.emit('control', {data:{"left":[0.0, 0.0]}});
+                nipple.off('start move end dir plain');
+            });
+
+
+            //----------------------- RIGHT JOYSTICK
+            var options = {
+                zone: document.getElementById('zone_joystick2'),
+                mode:"dynamic",
+                color:"red",
+                size:100,
+                restJoystick:false,
+                restOpacity:50,
+                fadeTime:0,
+            };
+            var manager2 = nipplejs.create(options);
+
+            manager2.on('added', function(evt, nipple){
+                nipple.on('move', function(evt,data){
+                    socket_control.emit('control', {data:{"right":[(data.distance/options.size), data.angle.degree]}});
+                });
+            }).on('removed', function(evt, nipple){
+                socket_control.emit('control', {data:{"right":[0.0, 0.0]}});
+                nipple.off('start move end dir plain');
+            });
+
+        </script>
+
+    </body>
+</html>
