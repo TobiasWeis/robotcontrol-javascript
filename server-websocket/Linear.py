@@ -32,13 +32,21 @@ class Linear:
         axis = 0
         while True:
             try:
-                axis = queue.get_nowait()
+                inp = queue.get_nowait()
             except:
                 pass
-            #print "[Linear] Got axis-value: ", axis
 
-            direction = np.sign(axis)
-            speed = abs(float(axis))
+            if inp[0] == "left": # left stick
+                axis = inp[1] #x
+                direction = np.sign(axis)
+                speed = abs(float(axis))
+            elif inp[0] == "right": # right stick
+                axisx = inp[1]
+                axisy = inp[2]
+            elif inp[0] == "a": # button a
+                print "[Robot] Btn A"
+            elif inp[0] == "b": # button b
+                print "[Robot] Btn B"
 
             if speed > 0:
                 if direction == 1:
@@ -58,29 +66,3 @@ class Linear:
                     time.sleep(self.interval/2.0)
                     GPIO.output(3, GPIO.LOW)
                     time.sleep(self.interval/2.0)
-
-
-"""
-for j in range(100):
-    GPIO.output(5, GPIO.HIGH)
-    GPIO.output(3, GPIO.LOW)
-
-    print "Performing ",ACTUAL_STEPS, " steps with interval ", INTERVAL
-
-    # try to do several steps
-    for i in range(ACTUAL_STEPS):
-        GPIO.output(3, GPIO.HIGH)
-        time.sleep(INTERVAL/2.0)
-        GPIO.output(3, GPIO.LOW)
-        time.sleep(INTERVAL/2.0)
-
-    # change direction
-    GPIO.output(5, GPIO.LOW)
-
-    for i in range(ACTUAL_STEPS):
-        GPIO.output(3, GPIO.HIGH)
-        time.sleep(INTERVAL/2.0)
-        GPIO.output(3, GPIO.LOW)
-        time.sleep(INTERVAL/2.0)
-"""
-

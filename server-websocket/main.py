@@ -61,17 +61,16 @@ def control(message):
         distance = data["left"][0]
         angle = data["left"][1]
         x,y = map_dist_angle(float(distance), float(angle))
-
-        # put it in queue for Robot-class to receive
-        q.put(x)
+        q.put(("left",x,y))
     elif "right" in data.keys():
         distance = data["right"][0]
         angle = data["right"][1]
+        x,y = map_dist_angle(float(distance), float(angle))
+        q.put("right",x,y)
     elif "A" in data.keys():
-        print "Button A pressed"
+        q.put("a")
     elif "B" in data.keys():
-        print "Button B pressed"
-
+        q.put("b")
 
 @app.route('/axis/<num>/<distance>/<angle>')
 def left(num,distance,angle):
