@@ -65,7 +65,9 @@ u.trigger = function (el, type, data) {
 };
 
 u.prepareEvent = function (evt) {
-    evt.preventDefault();
+    if (evt.target.className == 'front' || evt.target.className == 'back'){
+        evt.preventDefault();
+    }
     return evt.type.match(/^touch/) ? evt.changedTouches : evt;
 };
 
