@@ -3,9 +3,15 @@
         <link rel="stylesheet" type="text/css" href="css/main.css">
         <!-- wpsites.net/web-design/circle-buttons - Alex Wolfe - BIG THANKS! -->
         <link rel="stylesheet" type="text/css" href="css/button.css">
-        <script src="./js/jquery-3.3.1.min.js"></script>
+	<!--
+	<script src="http://code.jquery.com/jquery-1.11.3.min.js"></script>
+	<script src="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
+	-->
         <script src="./js/socket.io.js"></script>
         <script src="./js/nipplejs/dist/nipplejs.js"></script>
+	<script src="./js/jquery-3.3.1.min.js"></script>
+
+	<meta name="viewport" content="width=device-width, user-scalable=no">
     </head>
     <body>
 
@@ -39,9 +45,6 @@
 
             var socket_control = io.connect('http://'+location.host+":5000/control")
 
-            <!-- add on-click-listeners to the buttons -->
-            $('#button-left').on('click', function(){socket_control.emit('control', {data:{"A":1}})});
-            $('#button-right').on('click', function(){socket_control.emit('control', {data:{"B":1}})});
         </script>
 
         <!-- Joyticks -->
@@ -88,6 +91,12 @@
                 socket_control.emit('control', {data:{"right":[0.0, 0.0]}});
                 nipple.off('start move end dir plain');
             });
+
+            <!-- add on-click-listeners to the buttons -->
+            //$('#button-left').ontouchstart = function(){socket_control.emit('control', {data:{"A":1}})};
+            $('#button-left').on('click', function(){socket_control.emit('control', {data:{"A":1}})});
+            $('#button-right').on('click', function(){socket_control.emit('control', {data:{"B":1}})});
+
 
         </script>
 

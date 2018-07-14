@@ -58,7 +58,6 @@ def send_status():
 def control(message):
     data = message["data"]
     if "left" in data.keys():
-        print "LEFT!"
         distance = data["left"][0]
         angle = data["left"][1]
         x,y = map_dist_angle(float(distance), float(angle))

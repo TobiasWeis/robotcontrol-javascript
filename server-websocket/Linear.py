@@ -51,7 +51,7 @@ class Linear:
                 self.speed_rpm = 100
                 self.num_steps_per_sec=self.speed_rpm*self.actual_steps/60.0
                 self.interval = 1.0/self.num_steps_per_sec
-                print "Interval: ", self.interval
+                #print "Interval: ", self.interval
 
                 for i in range(10):
                     GPIO.output(3, GPIO.HIGH)
