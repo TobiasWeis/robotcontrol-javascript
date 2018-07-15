@@ -7,6 +7,9 @@
     </head>
     <body>
 
+        <div id="joystick_base" style="display:none;width:50px;height:50px;background-color:#666;z-index:100;position:absolute;top:0;left:0;"></div>
+        <div id="joystick_overlay" style="display:none;width:50px;height:50px;background-color:#fce;z-index:100;position:absolute;top:0;left:0;"></div>
+            
         <div id="leftzone" style="float:left;width:20%;height:100%;margin:0;padding:0;">
             <div id="joystick" style="width:100%;height:100%;background-color:#333;"></div>
         </div>
@@ -33,6 +36,7 @@
             $(document).ready(function(){
                 $('#output').text("starting");
 
+                var joystick_start = [-1,-1];
 
                 /******************************************
                   BUTTONS
@@ -59,9 +63,34 @@
                     if (!(
                         touch.clientX <= $(this).offset().left || touch.clientX >= $(this).offset().left + $(this).outerWidth() ||
                         touch.clientY <= $(this).offset().top  || touch.clientY >= $(this).offset().top + $(this).outerHeight())){
-                            $('#output').html("joystick "+ x + ":" + y);
+                            //$('#output').html("joystick "+ x + ":" + y);
+
+                        if(joystick_start[0] == -1){
+                            joystick_start = [x,y];
+                            //$('#output').html("joystick STARTED"+ x + ":" + y);
+                        }else{
+                            // calculate relative coordinates to starting point
+                            $('#output').html("joystick move:"+ (x-joystick_start[0]) + ":" + (y-joystick_start[1]));
+
+                            $('#joystick_overlay').css("display","block");
+                            $('#joystick_overlay').css("top", (y-25)+"px");
+                            $('#joystick_overlay').css("left" ,(x-25)+"px");
+
+                            $('#joystick_base').css("display","block");
+                            $('#joystick_base').css("top", (joystick_start[1]-25)+"px");
+                            $('#joystick_base').css("left" ,(joystick_start[0]-25)+"px");
+
+                        }
+
                     }
                     evt.preventDefault();
+                });
+
+                $('#joystick').on('touchend', function(evt){
+                    joystick_start = [-1,-1];
+                    $('#output').html("joystick end");
+                    $('#joystick_overlay').css("display","none");
+                    $('#joystick_base').css("display","none");
                 });
 
                 /******************************************
