@@ -1,0 +1,38 @@
+<html>
+    <head>
+
+        <meta name="viewport" content="width=device-width, user-scalable=no">
+	<script src="./js/jquery-3.3.1.min.js"></script>
+    </head>
+    <body style="width:100%;height:100%;margin:0;padding:0;overscroll-behavior:contain;">
+
+        <div id="output" style="width:100%;height:100%;background-color:#fce;"></div>
+
+        <script type="text/javascript">
+            $(document).ready(function(){
+                $('#output').text("starting");
+
+                $(document).on('touchstart touchmove', '#output', function(evt){
+                    console.log(evt);
+                    evt.preventDefault();
+                    var touches = evt.originalEvent.touches;
+                    txt = "";
+                    for(var i=0; i < touches.length; i++){
+                        txt += "TOUCH("+i+"): "+touches[i].pageX+":"+touches[i].pageY+"<br />";
+                    }
+
+                    $('#output').html(txt);
+
+                });
+
+            });
+
+            window.oncontextmenu = function(evt){
+                evt.preventDefault();
+                evt.stopPropagation();
+                return false;
+            }
+        </script>
+
+    </body>
+</html>

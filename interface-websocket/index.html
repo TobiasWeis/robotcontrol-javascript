@@ -2,11 +2,11 @@
     <head>
         <link rel="stylesheet" type="text/css" href="css/main.css">
         <!-- wpsites.net/web-design/circle-buttons - Alex Wolfe - BIG THANKS! -->
-        <link rel="stylesheet" type="text/css" href="css/button.css">
+        <!-- <link rel="stylesheet" type="text/css" href="css/button.css"> -->
 	<!--
 	<script src="http://code.jquery.com/jquery-1.11.3.min.js"></script>
+        -->
 	<script src="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
-	-->
         <script src="./js/socket.io.js"></script>
         <script src="./js/nipplejs/dist/nipplejs.js"></script>
 	<script src="./js/jquery-3.3.1.min.js"></script>
@@ -98,6 +98,12 @@
             $('#button-right').on('click', function(){socket_control.emit('control', {data:{"B":1}})});
 
 
+            // disable long-press context-menu
+            window.oncontextmenu = function(event){
+                event.preventDefault();
+                event.stopPropagation();
+                return false;
+            }
         </script>
 
     </body>
