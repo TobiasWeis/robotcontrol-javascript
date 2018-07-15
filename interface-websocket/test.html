@@ -14,9 +14,9 @@
 
         <div style="float:left;width:60%;height:100%;padding:0;margin:0;">
             <div id="infozone" style="float:left;width:100%;height:50%;margin:0;padding:0;">
-                <div id="output" style="float:left;width:100%;"></div>
+                <div id="output0" style="float:left;width:100%;"></div>
+                <div id="output1" style="float:left;width:100%;"></div>
                 <div id="output2" style="float:left;width:100%;"></div>
-                <div id="output3" style="float:left;width:100%;"></div>
             </div>
 
             <div id="buttonzone" style="float:left;width:100%;height:50%;margin:0;padding:0;">
@@ -29,59 +29,78 @@
             <div id="joystick2" style="width:100%;height:100%;background-color:#333;"></div>
         </div>
 
-        <div id="joystick_base" class="joystick_base"></div>
-        <div id="joystick_overlay" class="joystick_nip"></div>
-
         <script type="text/javascript">
 
-            class Joystick{
-                constructor(divname){
-                    this.radius = 30;
-                    this.joystick_start = [-1,-1];
-                    var thisclass = this;
+            var Joystick = function(divname,num){
+                    this.divname = "#"+divname; // so we can use jquery
+                    this.num = num;
+                    this.radius = 50;
+                    this.sx = -1;
+                    this.sy = -1;
+                    this.offset = $(this.divname).offset();
+
+                   /* create base div */
+                    $('<div class="joystick_base" id="'+divname+'_base_'+num+'">').appendTo('body');
+                    $('<div class="joystick_nip" id="'+divname+'_overlay_'+num+'">').appendTo('body');
+                    console.log("CTOR called for " + divname);
+
 
                     /* create listener */
-                    $(divname).on('touchstart touchmove click', function(evt){
-                        console.log("divname: " + divname);
-                        console.log("this is: " + this);
-                        console.log("thisclass is: " + thisclass);
-                        $('#output').text = "Yippi";
+                    $(this.divname).bind('touchstart touchmove click', {parentObj:this}, function(evt){
+                        var parentobj = evt.data.parentObj;
+
                         var touch = evt.originalEvent.targetTouches[0];
-                        var offset = $(divname).offset();
+                        var offset = $(parentobj.divname).offset();
                         var x = touch.clientX - offset.left;
                         var y = touch.clientY - offset.top;
                         if (!(
                             touch.clientX <= $(this).offset().left || touch.clientX >= $(this).offset().left + $(this).outerWidth() ||
                             touch.clientY <= $(this).offset().top  || touch.clientY >= $(this).offset().top + $(this).outerHeight())){
-
-                            if(thisclass.joystick_start[0] == -1){
-                                thisclass.start(x,y);
+                            if(parentobj.sx == -1){
+                                parentobj.start(x,y);
+                            }else{
+                                parentobj.handle(x,y);
                             }
                         }
+                        evt.preventDefault();
                     });
-                   /* create base div */
-                    $('<div class="joystick_base" id="joystick_base_0">').appendTo('body');
-                    console.log("CTOR called for " + divname)
 
+                    $(this.divname).bind('touchend', {parentObj:this}, function(evt){
+                        var parentobj = evt.data.parentObj;
+                        parentobj.sx = -1;
+                        parentobj.sy = -1;
+                        $('#output'+parentobj.num).html("joystick end");
+                        $(parentobj.divname+"_overlay_"+parentobj.num).css("display","none");
+                        $(parentobj.divname+"_base_"+parentobj.num).css("display","none");
+                        evt.preventDefault();
+                    });
                 }
 
-                start(sx,sy){
-                     /* start coordinates */
+            Joystick.prototype.start = function(sx,sy){
                     this.sx = sx;
                     this.sy = sy;
-                    alert("started");
-                    
-                     /* make visible */
-                    $('#joystick_base_0').css("display","block");
-               
+
+                    $(this.divname+'_overlay_'+this.num).css("display","block");
+                    $(this.divname+'_overlay_'+this.num).css("top", (this.sy-25+this.offset.left)+"px");
+                    $(this.divname+'_overlay_'+this.num).css("left" ,(this.sx-25+this.offset.top)+"px");
+
+                    $(this.divname+'_base_'+this.num).css("display","block");
+                    $(this.divname+'_base_'+this.num).css("top", (this.sy-this.radius+this.offset.top)+"px");
+                    $(this.divname+'_base_'+this.num).css("left" ,(this.sx-this.radius+this.offset.left)+"px");
                 }
-            }
+
+            Joystick.prototype.handle = function(x,y){
+                    // calculate relative coordinates to starting point
+                    if(Math.sqrt(Math.pow(x-this.sx,2)+Math.pow(y-this.sy, 2)) < this.radius){
+                        $('#output'+this.num).html("joystick move:"+ (x-this.sx) + ":" + (y-this.sy));
+
+                        $(this.divname+'_overlay_'+this.num).css("top", (y-25+this.offset.top)+"px");
+                        $(this.divname+'_overlay_'+this.num).css("left" ,(x-25+this.offset.left)+"px");
+                    }
+                }
 
             $(document).ready(function(){
                 $('#output').text("starting");
-
-                var joystick_start = [-1,-1];
-                var radius = 50;
 
                 /******************************************
                   BUTTONS
@@ -96,82 +115,17 @@
                 });
 
                 /******************************************
-                  JOYSTICK 1
+                  JOYSTICKS
                   *****************************************/
-                const test = new Joystick("#joystick");
-                /*$(document).on('touchstart touchmove', '#joystick', function(evt){*/
-                /*
-                $('#joystick').on('touchstart touchmove', function(evt){
-                    var touch = evt.originalEvent.targetTouches[0];
-                    var offset = $('#joystick').offset();
-                    var x = touch.clientX - offset.left;
-                    var y = touch.clientY - offset.top;
-                    if (!(
-                        touch.clientX <= $(this).offset().left || touch.clientX >= $(this).offset().left + $(this).outerWidth() ||
-                        touch.clientY <= $(this).offset().top  || touch.clientY >= $(this).offset().top + $(this).outerHeight())){
-                            //$('#output').html("joystick "+ x + ":" + y);
+                var test2 = new Joystick("joystick2", 1);
+                var test = new Joystick("joystick", 0);
 
-                        if(joystick_start[0] == -1){
-                            const test = new Joystick(x,y);
-                            joystick_start = [x,y];
-                            //$('#output').html("joystick STARTED"+ x + ":" + y);
-                        }else{
-                            // calculate relative coordinates to starting point
-
-                            if(Math.sqrt(Math.pow(x-joystick_start[0],2)+Math.pow(y-joystick_start[1], 2)) < radius){
-                                $('#output').html("joystick move:"+ (x-joystick_start[0]) + ":" + (y-joystick_start[1]));
-
-                                $('#joystick_overlay').css("display","block");
-                                $('#joystick_overlay').css("top", (y-25)+"px");
-                                $('#joystick_overlay').css("left" ,(x-25)+"px");
-
-                                $('#joystick_base').css("display","block");
-                                $('#joystick_base').css("top", (joystick_start[1]-radius)+"px");
-                                $('#joystick_base').css("left" ,(joystick_start[0]-radius)+"px");
-                            }
-
-                        }
-
-                    }else{
-                        $('#output').html("w/o: joystick "+ x + ":" + y);
-                    }
+                window.oncontextmenu = function(evt){
                     evt.preventDefault();
-                });
-
-
-                $('#joystick').on('touchend', function(evt){
-                    joystick_start = [-1,-1];
-                    $('#output').html("joystick end");
-                    $('#joystick_overlay').css("display","none");
-                    $('#joystick_base').css("display","none");
-                });
-                */
-
-                /******************************************
-                  JOYSTICK 2
-                  *****************************************/
-                /*$(document).on('touchstart touchmove', '#joystick2', function(evt){*/
-                $('#joystick2').on('touchstart touchmove', function(evt){
-                    var touch = evt.originalEvent.targetTouches[0];
-                    var offset = $('#joystick2').offset();
-                    var x = touch.clientX - offset.left;
-                    var y = touch.clientY - offset.top;
-                    if (!(
-                        touch.clientX <= $(this).offset().left || touch.clientX >= $(this).offset().left + $(this).outerWidth() ||
-                        touch.clientY <= $(this).offset().top  || touch.clientY >= $(this).offset().top + $(this).outerHeight())){
-                            $('#output3').html("joystick2 "+ x + ":" + y);
-                    }
-                    evt.preventDefault();
-                });
-
-
+                    evt.stopPropagation();
+                    return false;
+                }
             });
-
-            window.oncontextmenu = function(evt){
-                evt.preventDefault();
-                evt.stopPropagation();
-                return false;
-            }
         </script>
 
     </body>
