@@ -1,29 +1,86 @@
 <html>
     <head>
-
+        <!-- <link rel="stylesheet" type="text/css" href="mybutton.css"> -->
+        <link rel="stylesheet" type="text/css" href="style.css">
         <meta name="viewport" content="width=device-width, user-scalable=no">
 	<script src="./js/jquery-3.3.1.min.js"></script>
     </head>
-    <body style="width:100%;height:100%;margin:0;padding:0;overscroll-behavior:contain;">
+    <body>
 
-        <div id="output" style="width:100%;height:100%;background-color:#fce;"></div>
+        <div id="leftzone" style="float:left;width:20%;height:100%;margin:0;padding:0;">
+            <div id="joystick" style="width:100%;height:100%;background-color:#333;"></div>
+        </div>
+
+        <div style="float:left;width:60%;height:100%;padding:0;margin:0;">
+            <div id="infozone" style="float:left;width:100%;height:50%;margin:0;padding:0;">
+                <div id="output" style="float:left;width:100%;"></div>
+                <div id="output2" style="float:left;width:100%;"></div>
+                <div id="output3" style="float:left;width:100%;"></div>
+            </div>
+
+            <div id="buttonzone" style="float:left;width:100%;height:50%;margin:0;padding:0;">
+                <a href="#" id="button1" class="button tick noSelect"></a>
+                <a href="#" id="button2" class="button heart noSelect"></a>
+            </div>
+        </div>
+
+        <div id="rightzone" style="float:left;width:20%;height:100%;">
+            <div id="joystick2" style="width:100%;height:100%;background-color:#333;"></div>
+        </div>
+
 
         <script type="text/javascript">
             $(document).ready(function(){
                 $('#output').text("starting");
 
-                $(document).on('touchstart touchmove', '#output', function(evt){
-                    console.log(evt);
+
+                /******************************************
+                  BUTTONS
+                  *****************************************/
+                $(document).on('touchstart touchmove', '#button1', function(evt){
+                    $('#output2').html("Button1");
                     evt.preventDefault();
-                    var touches = evt.originalEvent.touches;
-                    txt = "";
-                    for(var i=0; i < touches.length; i++){
-                        txt += "TOUCH("+i+"): "+touches[i].pageX+":"+touches[i].pageY+"<br />";
-                    }
-
-                    $('#output').html(txt);
-
                 });
+                $(document).on('touchstart touchmove', '#button2', function(evt){
+                    $('#output2').html("Button2");
+                    evt.preventDefault();
+                });
+
+                /******************************************
+                  JOYSTICK 1
+                  *****************************************/
+                /*$(document).on('touchstart touchmove', '#joystick', function(evt){*/
+                $('#joystick').on('touchstart touchmove', function(evt){
+                    var touch = evt.originalEvent.targetTouches[0];
+                    var offset = $('#joystick').offset();
+                    var x = touch.clientX - offset.left;
+                    var y = touch.clientY - offset.top;
+                    $('#output').html("w/o: joystick "+ x + ":" + y);
+                    if (!(
+                        touch.clientX <= $(this).offset().left || touch.clientX >= $(this).offset().left + $(this).outerWidth() ||
+                        touch.clientY <= $(this).offset().top  || touch.clientY >= $(this).offset().top + $(this).outerHeight())){
+                            $('#output').html("joystick "+ x + ":" + y);
+                    }
+                    evt.preventDefault();
+                });
+
+                /******************************************
+                  JOYSTICK 2
+                  *****************************************/
+                /*$(document).on('touchstart touchmove', '#joystick2', function(evt){*/
+                $('#joystick2').on('touchstart touchmove', function(evt){
+                    var touch = evt.originalEvent.targetTouches[0];
+                    var offset = $('#joystick2').offset();
+                    var x = touch.clientX - offset.left;
+                    var y = touch.clientY - offset.top;
+                    if (!(
+                        touch.clientX <= $(this).offset().left || touch.clientX >= $(this).offset().left + $(this).outerWidth() ||
+                        touch.clientY <= $(this).offset().top  || touch.clientY >= $(this).offset().top + $(this).outerHeight())){
+                            $('#output3').html("joystick2 "+ x + ":" + y);
+                    }
+                    evt.preventDefault();
+                });
+
 
             });
 
