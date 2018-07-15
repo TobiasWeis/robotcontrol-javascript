@@ -7,8 +7,6 @@
     </head>
     <body>
 
-        <div id="joystick_base" style="display:none;width:50px;height:50px;background-color:#666;z-index:100;position:absolute;top:0;left:0;"></div>
-        <div id="joystick_overlay" style="display:none;width:50px;height:50px;background-color:#fce;z-index:100;position:absolute;top:0;left:0;"></div>
             
         <div id="leftzone" style="float:left;width:20%;height:100%;margin:0;padding:0;">
             <div id="joystick" style="width:100%;height:100%;background-color:#333;"></div>
@@ -31,12 +29,26 @@
             <div id="joystick2" style="width:100%;height:100%;background-color:#333;"></div>
         </div>
 
+        <div id="joystick_base" class="joystick_base"></div>
+        <div id="joystick_overlay" class="joystick_nip"></div>
 
         <script type="text/javascript">
+
+            class Joystick{
+                constructor(sx,sy){
+                    /* start coordinates */
+                    this.sx = sx;
+                    this.sy = sy;
+                    
+                    /* create base div */
+                }
+            }
+
             $(document).ready(function(){
                 $('#output').text("starting");
 
                 var joystick_start = [-1,-1];
+                var radius = 50;
 
                 /******************************************
                   BUTTONS
@@ -59,29 +71,35 @@
                     var offset = $('#joystick').offset();
                     var x = touch.clientX - offset.left;
                     var y = touch.clientY - offset.top;
-                    $('#output').html("w/o: joystick "+ x + ":" + y);
                     if (!(
                         touch.clientX <= $(this).offset().left || touch.clientX >= $(this).offset().left + $(this).outerWidth() ||
                         touch.clientY <= $(this).offset().top  || touch.clientY >= $(this).offset().top + $(this).outerHeight())){
                             //$('#output').html("joystick "+ x + ":" + y);
 
                         if(joystick_start[0] == -1){
+                            const test = new Joystick(x,y);
                             joystick_start = [x,y];
                             //$('#output').html("joystick STARTED"+ x + ":" + y);
                         }else{
                             // calculate relative coordinates to starting point
-                            $('#output').html("joystick move:"+ (x-joystick_start[0]) + ":" + (y-joystick_start[1]));
 
-                            $('#joystick_overlay').css("display","block");
-                            $('#joystick_overlay').css("top", (y-25)+"px");
-                            $('#joystick_overlay').css("left" ,(x-25)+"px");
+                            if(Math.sqrt(Math.pow(x-joystick_start[0],2)+Math.pow(y-joystick_start[1], 2)) < radius){
+                                $('#output').html("joystick move:"+ (x-joystick_start[0]) + ":" + (y-joystick_start[1]));
 
-                            $('#joystick_base').css("display","block");
-                            $('#joystick_base').css("top", (joystick_start[1]-25)+"px");
-                            $('#joystick_base').css("left" ,(joystick_start[0]-25)+"px");
+                                $('#joystick_overlay').css("display","block");
+                                $('#joystick_overlay').css("top", (y-25)+"px");
+                                $('#joystick_overlay').css("left" ,(x-25)+"px");
+
+                                $('#joystick_base').css("display","block");
+                                $('#joystick_base').css("top", (joystick_start[1]-radius)+"px");
+                                $('#joystick_base').css("left" ,(joystick_start[0]-radius)+"px");
+                            }
 
                         }
 
+                    }else{
+                        /* TODO: calculate intersection with outer circle */
+                        $('#output').html("w/o: joystick "+ x + ":" + y);
                     }
                     evt.preventDefault();
                 });
