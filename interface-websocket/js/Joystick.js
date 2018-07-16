@@ -10,6 +10,9 @@ var Joystick = function(divname,num, socket, name){
 
        /* create base div */
         $('<div class="joystick_base" id="'+divname+'_base_'+num+'">').appendTo('body');
+        $(this.divname+"_base_"+num).css("width",(this.radius*2)+"px");
+        $(this.divname+"_base_"+num).css("height",(this.radius*2)+"px");
+
         $('<div class="joystick_nip" id="'+divname+'_overlay_'+num+'">').appendTo('body');
         console.log("CTOR called for " + divname);
 
@@ -33,7 +36,7 @@ var Joystick = function(divname,num, socket, name){
 
                 /* send data via websocket */
                 var data = {}
-                data[parentobj.name] = [x/parentobj.radius,y/parentobj.radius];
+                data[parentobj.name] = [(x-parentobj.sx)/parentobj.radius, (y-parentobj.sy)/parentobj.radius];
                 parentobj.socket.emit('control', {data:data});
             }
             evt.preventDefault();
@@ -72,7 +75,7 @@ Joystick.prototype.start = function(sx,sy){
 Joystick.prototype.handle = function(x,y){
         // calculate relative coordinates to starting point
         if(Math.sqrt(Math.pow(x-this.sx,2)+Math.pow(y-this.sy, 2)) < this.radius){
-            $('#output'+this.num).html("joystick move:"+ (x-this.sx).toFixed(1) + ":" + (y-this.sy).toFixed(1));
+            $('#output'+this.num).html("joystick move:"+ ((x-this.sx)/this.radius).toFixed(1) + ":" + ((y-this.sy)/this.radius).toFixed(1));
 
             $(this.divname+'_overlay_'+this.num).css("top", (y-25+this.offset.top)+"px");
             $(this.divname+'_overlay_'+this.num).css("left" ,(x-25+this.offset.left)+"px");
