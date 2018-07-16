@@ -26,6 +26,9 @@
         <div id="joystick2" class="joystick_zone"></div>
 
         <script type="text/javascript">
+            var socket_status = io.connect('http://'+location.host+":5000/status");
+            var socket_control = io.connect('http://'+location.host+":5000/control");
+
             $(document).ready(function(){
                 $('#output').text("starting");
 
@@ -34,9 +37,11 @@
                   *****************************************/
                 $(document).on('touchstart touchmove', '#button1', function(evt){
                     $('#output2').html("Button1");
+                    socket_control.emit('control', {data:{"A":1}});
                     evt.preventDefault();
                 });
                 $(document).on('touchstart touchmove', '#button2', function(evt){
+                    socket_control.emit('control', {data:{"B":1}});
                     $('#output2').html("Button2");
                     evt.preventDefault();
                 });
@@ -44,8 +49,9 @@
                 /******************************************
                   JOYSTICKS
                   *****************************************/
-                var test = new Joystick("joystick", 0);
-                var test2 = new Joystick("joystick2", 1);
+                //socket_control.emit('control', {data:{"left":[(data.distance/options.size), data.angle.degree]}});
+                var test = new Joystick("joystick", 0, socket_control, "left");
+                var test2 = new Joystick("joystick2", 1, socket_control, "right");
 
                 window.oncontextmenu = function(evt){
                     evt.preventDefault();

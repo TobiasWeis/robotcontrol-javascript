@@ -1,6 +1,8 @@
-var Joystick = function(divname,num){
+var Joystick = function(divname,num, socket, name){
         this.divname = "#"+divname; // so we can use jquery
         this.num = num;
+        this.socket = socket;
+        this.name = name;
         this.radius = 50;
         this.sx = -1;
         this.sy = -1;
@@ -28,6 +30,11 @@ var Joystick = function(divname,num){
                 }else{
                     parentobj.handle(x,y);
                 }
+
+                /* send data via websocket */
+                var data = {}
+                data[parentobj.name] = [x/parentobj.radius,y/parentobj.radius];
+                parentobj.socket.emit('control', {data:data});
             }
             evt.preventDefault();
         });
@@ -39,6 +46,12 @@ var Joystick = function(divname,num){
             $('#output'+parentobj.num).html("joystick end");
             $(parentobj.divname+"_overlay_"+parentobj.num).css("display","none");
             $(parentobj.divname+"_base_"+parentobj.num).css("display","none");
+
+            /* send data via websocket */
+            var data = {}
+            data[parentobj.name] = [0.0,0.0];
+            parentobj.socket.emit('control', {data:data});
+
             evt.preventDefault();
         });
     }

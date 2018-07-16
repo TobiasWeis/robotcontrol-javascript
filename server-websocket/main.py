@@ -62,15 +62,19 @@ def control(message):
         angle = data["left"][1]
         x,y = map_dist_angle(float(distance), float(angle))
         q.put(("left",x,y))
+        print "Left: ",x,",",y
     elif "right" in data.keys():
         distance = data["right"][0]
         angle = data["right"][1]
         x,y = map_dist_angle(float(distance), float(angle))
         q.put(("right",x,y))
+        print "Right: ",x,",",y
     elif "A" in data.keys():
         q.put("a")
+        print "A"
     elif "B" in data.keys():
         q.put("b")
+        print "B"
 
 @app.route('/axis/<num>/<distance>/<angle>')
 def left(num,distance,angle):
