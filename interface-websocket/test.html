@@ -1,104 +1,31 @@
 <html>
     <head>
-        <!-- <link rel="stylesheet" type="text/css" href="mybutton.css"> -->
         <link rel="stylesheet" type="text/css" href="style.css">
+        <link href="http://fonts.googleapis.com/css?family=Orbitron" rel="stylesheet" type="text/css" />
         <meta name="viewport" content="width=device-width, user-scalable=no">
 	<script src="./js/jquery-3.3.1.min.js"></script>
+        <script src="./js/socket.io.js"></script>
+        <script src="./js/virtualJoypad.js"></script>
     </head>
     <body>
+        <div id="joystick" class="joystick_zone"></div>
 
-            
-        <div id="leftzone" style="float:left;width:20%;height:100%;margin:0;padding:0;">
-            <div id="joystick" style="width:100%;height:100%;background-color:#333;"></div>
-        </div>
-
-        <div style="float:left;width:60%;height:100%;padding:0;margin:0;">
-            <div id="infozone" style="float:left;width:100%;height:50%;margin:0;padding:0;">
+        <div class="middle_zone">
+            <div id="infozone" class="info_zone">
                 <div id="output0" style="float:left;width:100%;"></div>
                 <div id="output1" style="float:left;width:100%;"></div>
                 <div id="output2" style="float:left;width:100%;"></div>
             </div>
 
             <div id="buttonzone" style="float:left;width:100%;height:50%;margin:0;padding:0;">
-                <a href="#" id="button1" class="button tick noSelect"></a>
-                <a href="#" id="button2" class="button heart noSelect"></a>
+                <a href="#" id="button1" class="button buttonA noSelect"></a>
+                <a href="#" id="button2" class="button buttonB noSelect" style="float:right;"></a>
             </div>
         </div>
 
-        <div id="rightzone" style="float:left;width:20%;height:100%;">
-            <div id="joystick2" style="width:100%;height:100%;background-color:#333;"></div>
-        </div>
+        <div id="joystick2" class="joystick_zone"></div>
 
         <script type="text/javascript">
-
-            var Joystick = function(divname,num){
-                    this.divname = "#"+divname; // so we can use jquery
-                    this.num = num;
-                    this.radius = 50;
-                    this.sx = -1;
-                    this.sy = -1;
-                    this.offset = $(this.divname).offset();
-
-                   /* create base div */
-                    $('<div class="joystick_base" id="'+divname+'_base_'+num+'">').appendTo('body');
-                    $('<div class="joystick_nip" id="'+divname+'_overlay_'+num+'">').appendTo('body');
-                    console.log("CTOR called for " + divname);
-
-
-                    /* create listener */
-                    $(this.divname).bind('touchstart touchmove click', {parentObj:this}, function(evt){
-                        var parentobj = evt.data.parentObj;
-
-                        var touch = evt.originalEvent.targetTouches[0];
-                        var offset = $(parentobj.divname).offset();
-                        var x = touch.clientX - offset.left;
-                        var y = touch.clientY - offset.top;
-                        if (!(
-                            touch.clientX <= $(this).offset().left || touch.clientX >= $(this).offset().left + $(this).outerWidth() ||
-                            touch.clientY <= $(this).offset().top  || touch.clientY >= $(this).offset().top + $(this).outerHeight())){
-                            if(parentobj.sx == -1){
-                                parentobj.start(x,y);
-                            }else{
-                                parentobj.handle(x,y);
-                            }
-                        }
-                        evt.preventDefault();
-                    });
-
-                    $(this.divname).bind('touchend', {parentObj:this}, function(evt){
-                        var parentobj = evt.data.parentObj;
-                        parentobj.sx = -1;
-                        parentobj.sy = -1;
-                        $('#output'+parentobj.num).html("joystick end");
-                        $(parentobj.divname+"_overlay_"+parentobj.num).css("display","none");
-                        $(parentobj.divname+"_base_"+parentobj.num).css("display","none");
-                        evt.preventDefault();
-                    });
-                }
-
-            Joystick.prototype.start = function(sx,sy){
-                    this.sx = sx;
-                    this.sy = sy;
-
-                    $(this.divname+'_overlay_'+this.num).css("display","block");
-                    $(this.divname+'_overlay_'+this.num).css("top", (this.sy-25+this.offset.left)+"px");
-                    $(this.divname+'_overlay_'+this.num).css("left" ,(this.sx-25+this.offset.top)+"px");
-
-                    $(this.divname+'_base_'+this.num).css("display","block");
-                    $(this.divname+'_base_'+this.num).css("top", (this.sy-this.radius+this.offset.top)+"px");
-                    $(this.divname+'_base_'+this.num).css("left" ,(this.sx-this.radius+this.offset.left)+"px");
-                }
-
-            Joystick.prototype.handle = function(x,y){
-                    // calculate relative coordinates to starting point
-                    if(Math.sqrt(Math.pow(x-this.sx,2)+Math.pow(y-this.sy, 2)) < this.radius){
-                        $('#output'+this.num).html("joystick move:"+ (x-this.sx) + ":" + (y-this.sy));
-
-                        $(this.divname+'_overlay_'+this.num).css("top", (y-25+this.offset.top)+"px");
-                        $(this.divname+'_overlay_'+this.num).css("left" ,(x-25+this.offset.left)+"px");
-                    }
-                }
-
             $(document).ready(function(){
                 $('#output').text("starting");
 
@@ -117,8 +44,8 @@
                 /******************************************
                   JOYSTICKS
                   *****************************************/
-                var test2 = new Joystick("joystick2", 1);
                 var test = new Joystick("joystick", 0);
+                var test2 = new Joystick("joystick2", 1);
 
                 window.oncontextmenu = function(evt){
                     evt.preventDefault();
