@@ -36,6 +36,7 @@ class Linear:
             try:
                 inp = queue.get_nowait()
             except:
+                time.sleep(0.1)
                 pass
 
             if inp[0] == "left": # left stick

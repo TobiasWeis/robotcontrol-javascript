@@ -9,13 +9,20 @@ import math
 import json
 from multiprocessing import Process, Queue
 
-q = Queue()
+ql = Queue()
+qs = Queue()
+
 try:
     from Linear import *
-    linear = Linear(q)
+    linear = Linear(ql)
     linear.start()
-except:
+
+    from Servo import *
+    servo = Servo(qs)
+    servo.start()
+except Exception, e:
     print("Could not import robot")
+    print e
 
 
 app = Flask(__name__)
@@ -61,19 +68,19 @@ def control(message):
         distance = data["left"][0]
         angle = data["left"][1]
         x,y = map_dist_angle(float(distance), float(angle))
-        q.put(("left",x,y))
+        ql.put(("left",x,y))
         print "Left: ",x,",",y
     elif "right" in data.keys():
         distance = data["right"][0]
         angle = data["right"][1]
         x,y = map_dist_angle(float(distance), float(angle))
-        q.put(("right",x,y))
+        qs.put(("right",x,y))
         print "Right: ",x,",",y
     elif "A" in data.keys():
-        q.put("a")
+        ql.put("a")
         print "A"
     elif "B" in data.keys():
-        q.put("b")
+        ql.put("b")
         print "B"
 
 @app.route('/axis/<num>/<distance>/<angle>')
