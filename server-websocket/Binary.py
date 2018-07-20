@@ -10,10 +10,13 @@ from multiprocessing import Process, Queue
 import RPi.GPIO as GPIO
 
 class Binary:
-    def __init__(self, queue, pin):
+    def __init__(self, queue, pin, axis="A"):
         self.q = queue
         self.pin = pin
         self.state = 0
+        self.debounce_time = 0.5
+        self.last_button_ts = 0
+        self.axis=axis
 
     def start(self):
         self.p = Process(target=self.run, args=((self.q),))
@@ -29,10 +32,11 @@ class Binary:
             try:
                 inp = queue.get_nowait()
                 print inp
-                if inp[0] == "A":
+                if inp[0] == self.axis and time.time() - self.last_button_ts > self.debounce_time:
                     self.state = (self.state + 1) % 2
                     print "[Binary] Changed state to", self.state
                     GPIO.output(self.pin, self.state)
+                    self.last_button_ts = time.time()
             except:
                 time.sleep(0.01)
                 pass

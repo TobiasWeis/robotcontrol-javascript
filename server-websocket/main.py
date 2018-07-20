@@ -13,6 +13,7 @@ ql = Queue()
 qs = Queue()
 qs2 = Queue()
 qb = Queue()
+qb2 = Queue()
 
 try:
     from Linear import *
@@ -26,8 +27,11 @@ try:
     servo2.start()
 
     from Binary import *
-    binary = Binary(qb, 13)
+    binary = Binary(qb, 13, axis="A")
     binary.start()
+
+    binary2 = Binary(qb2,15, axis="B")
+    binary2.start()
 
 except Exception, e:
     print("Could not import robot")
@@ -37,7 +41,6 @@ except Exception, e:
 app = Flask(__name__)
 CORS(app)
 socketio = SocketIO(app)
-
 
 
 def map_dist_angle(distance, angle):
@@ -74,15 +77,13 @@ def send_status():
 def control(message):
     data = message["data"]
     if "left" in data.keys():
-        distance = data["left"][0]
-        angle = data["left"][1]
-        x,y = map_dist_angle(float(distance), float(angle))
+        x = data["left"][0]
+        y = data["left"][1]
         ql.put(("left",x,y))
         print "Left: ",x,",",y
     elif "right" in data.keys():
-        distance = data["right"][0]
-        angle = data["right"][1]
-        x,y = map_dist_angle(float(distance), float(angle))
+        x = data["right"][0]
+        y = data["right"][1]
         qs.put(("right",x,y))
         qs2.put(("right",y,x))
         print "Right: ",x,",",y
@@ -90,7 +91,7 @@ def control(message):
         qb.put(("A",1,0))
         print "A"
     elif "B" in data.keys():
-        ql.put("B")
+        qb2.put(("B",1,0))
         print "B"
 
 @app.route('/axis/<num>/<distance>/<angle>')
