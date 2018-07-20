@@ -11,6 +11,8 @@ from multiprocessing import Process, Queue
 
 ql = Queue()
 qs = Queue()
+qs2 = Queue()
+qb = Queue()
 
 try:
     from Linear import *
@@ -18,8 +20,15 @@ try:
     linear.start()
 
     from Servo import *
-    servo = Servo(qs)
+    servo = Servo(qs, 7)
     servo.start()
+    servo2 = Servo(qs2, 11)
+    servo2.start()
+
+    from Binary import *
+    binary = Binary(qb, 13)
+    binary.start()
+
 except Exception, e:
     print("Could not import robot")
     print e
@@ -75,12 +84,13 @@ def control(message):
         angle = data["right"][1]
         x,y = map_dist_angle(float(distance), float(angle))
         qs.put(("right",x,y))
+        qs2.put(("right",y,x))
         print "Right: ",x,",",y
     elif "A" in data.keys():
-        ql.put("a")
+        qb.put(("A",1,0))
         print "A"
     elif "B" in data.keys():
-        ql.put("b")
+        ql.put("B")
         print "B"
 
 @app.route('/axis/<num>/<distance>/<angle>')

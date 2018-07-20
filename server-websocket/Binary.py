@@ -9,11 +9,11 @@ import numpy as np
 from multiprocessing import Process, Queue 
 import RPi.GPIO as GPIO
 
-class Servo:
+class Binary:
     def __init__(self, queue, pin):
         self.q = queue
-        self.position = 0
-        self.servopin = pin
+        self.pin = pin
+        self.state = 0
 
     def start(self):
         self.p = Process(target=self.run, args=((self.q),))
@@ -23,28 +23,18 @@ class Servo:
         inp = (0,0,0)
         GPIO.setmode(GPIO.BOARD)
 
-        GPIO.setup(self.servopin, GPIO.OUT) # step
-        self.pwm = GPIO.PWM(self.servopin, 50)
-
-        self.pwm.start(2.5)
+        GPIO.setup(self.pin, GPIO.OUT) # step
 
         while True:
             try:
                 inp = queue.get_nowait()
-                if inp[0] == "right":
-                    axis = inp[1]
-                    self.position = float(axis)
-                    if self.position > 0:
-                        self.dc = 12.5
-                    else:
-                        self.dc = 5
-                    """
-                    self.dc = max(0, min(100, abs(float(axis)*100.0)))
-                    """
-                    self.pwm.ChangeDutyCycle(self.dc)
-                    print "[Servo] Dutycycle changed to ", self.dc
+                print inp
+                if inp[0] == "A":
+                    self.state = (self.state + 1) % 2
+                    print "[Binary] Changed state to", self.state
+                    GPIO.output(self.pin, self.state)
             except:
-                time.sleep(0.001)
+                time.sleep(0.01)
                 pass
 
 if __name__ == "__main__":
