@@ -11,15 +11,19 @@
         <div id="joystick" class="joystick_zone"></div>
 
         <div class="middle_zone">
+            <div id="ledzone" class="led_zone">  
+		        <div id="connex" style="float:left;width:100%;margin:0;padding:0;">
+                    <div class="led-box"><div class="led-red"></div><div class="led-text">Not Connected</div></div>
+                </div>
+            </div>
             <div id="infozone" class="info_zone">
                 <p style="margin:0;padding:0;text-align:center;border-bottom:1px solid #333;">-=<| robotcontrol v1.0 |>=-</p>
                 <div id="output0" style="float:left;width:100%;">Joystick left</div>
                 <div id="output1" style="float:left;width:100%;">Joystick right</div>
                 <div id="output2" style="float:left;width:100%;">Buttons</div>
-		<div id="connex" style="float:left;width:100%;">not connected</div>
             </div>
 
-            <div id="buttonzone" style="float:left;width:100%;height:50%;margin:0;padding:0;">
+            <div id="buttonzone">
                 <a href="#" id="button1" class="button buttonA noSelect"></a>
                 <a href="#" id="button2" class="button buttonB noSelect" style="float:right;"></a>
             </div>
@@ -32,14 +36,14 @@
             var socket_control = io.connect('http://'+location.host+":5000/control");
 
             $(document).ready(function(){
-		/* connected display */
-		setInterval(function(){
-		    if(socket_status.connected){
-			$('#connex').text("Connected");
-		    }else{
-			$('#connex').text("NOT Connected");
-		    }
-		}, 1000);
+                /* connected display */
+                setInterval(function(){
+                    if(socket_status.connected){
+                        $('#connex').html('<div class="led-box"><div class="led-blue"></div><div class="led-text">Connected</div></div>');
+                    }else{
+                        $('#connex').html('<div class="led-box"><div class="led-red"></div><div class="led-text">Not Connected</div></div>');
+                    }
+                }, 1000);
 
                 $('#output').text("starting");
 
