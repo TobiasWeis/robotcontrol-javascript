@@ -16,6 +16,7 @@
                 <div id="output0" style="float:left;width:100%;">Joystick left</div>
                 <div id="output1" style="float:left;width:100%;">Joystick right</div>
                 <div id="output2" style="float:left;width:100%;">Buttons</div>
+		<div id="connex" style="float:left;width:100%;">not connected</div>
             </div>
 
             <div id="buttonzone" style="float:left;width:100%;height:50%;margin:0;padding:0;">
@@ -31,6 +32,15 @@
             var socket_control = io.connect('http://'+location.host+":5000/control");
 
             $(document).ready(function(){
+		/* connected display */
+		setInterval(function(){
+		    if(socket_status.connected){
+			$('#connex').text("Connected");
+		    }else{
+			$('#connex').text("NOT Connected");
+		    }
+		}, 1000);
+
                 $('#output').text("starting");
 
                 /******************************************
