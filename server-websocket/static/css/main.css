@@ -1,0 +1,71 @@
+body{
+    margin:0;
+    padding:0;
+}
+
+h1{
+    width:100%;
+    padding:0;
+    margin:0;
+    text-align:center;
+}
+
+.controllerzone{
+    width:100%;
+    height:100%;
+    background-color:#eee;
+    float:left;
+}
+
+.joystickzone-left{
+    float:left;
+    position:relative;
+    left:0px;
+    top:0px;
+    width:20%;
+    height:100%;
+    background-color:#ccc;
+    padding:0;
+    margin:0;
+}
+
+.infozone{
+    float:left;
+    background-color:#eee;
+    height:100%;
+    width:60%;
+    margin:0;
+    padding:0;
+}
+
+.statuszone{
+    float:left;
+    background-color:#ccc;
+    height:50%;
+    width:100%;
+    margin:0;
+    padding:0;
+}
+
+
+.buttonzone{
+    float:left;
+    background-color:#ddd;
+    height:50%;
+    width:100%;
+    margin:0;
+    padding:0;
+
+}
+
+.joystickzone-right{
+    float:right;
+    position:relative;
+    left:0px;
+    top:0px;
+    width:20%;
+    height:100%;
+    background-color:#ccc;
+    margin:0;
+    padding:0
+}
