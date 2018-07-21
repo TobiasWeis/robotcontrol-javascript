@@ -6,16 +6,19 @@
 """
 import time
 import numpy as np
-from multiprocessing import Process, Queue 
+from multiprocessing import Process
 import RPi.GPIO as GPIO
 
 class Linear:
-    def __init__(self, queue):
+    def __init__(self, queue, verbose="False"):
         self.q = queue
+        self.verbose = verbose
+
         self.numsteps = 400
         self.microstep = 16
         self.actual_steps=self.numsteps * self.microstep
 
+        GPIO.setwarnings(False)
         GPIO.setmode(GPIO.BOARD)
 
         GPIO.setup(3, GPIO.OUT) # step
@@ -44,17 +47,6 @@ class Linear:
                 self.direction = np.sign(axis)
                 self.speed = abs(float(axis))
 
-            elif inp[0] == "right": # right stick
-                axisx = inp[1]
-                axisy = inp[2]
-            elif inp[0] == "a": # button a
-                print "[Robot] Btn A"
-                inp = (0,0,0) # reset input
-            elif inp[0] == "b": # button b
-                print "[Robot] Btn B"
-                inp = (0,0,0) # reset input
-
-
             if self.speed > 0:
                 if self.direction == 1:
                     GPIO.output(5, GPIO.HIGH)
@@ -66,7 +58,7 @@ class Linear:
                 self.speed_rpm = 100
                 self.num_steps_per_sec=self.speed_rpm*self.actual_steps/60.0
                 self.interval = 1.0/self.num_steps_per_sec
-                #print "Interval: ", self.interval
+                if self.verbose: print "Interval: ", self.interval
 
                 for i in range(10):
                     GPIO.output(3, GPIO.HIGH)

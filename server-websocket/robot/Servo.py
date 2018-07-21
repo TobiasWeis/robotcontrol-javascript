@@ -10,9 +10,10 @@ from multiprocessing import Process, Queue
 import RPi.GPIO as GPIO
 
 class Servo:
-    def __init__(self, queue, pin):
+    def __init__(self, queue, pin, verbose="False"):
         self.q = queue
         self.servopin = pin
+        self.verbose = verbose
 
     def start(self):
         self.p = Process(target=self.run, args=((self.q),))
@@ -36,8 +37,8 @@ class Servo:
 
     def run(self, queue):
         inp = (0,0,0)
+        GPIO.setwarnings(False)
         GPIO.setmode(GPIO.BOARD)
-
         GPIO.setup(self.servopin, GPIO.OUT) # step
         self.pwm = GPIO.PWM(self.servopin, 50)
 
@@ -50,7 +51,7 @@ class Servo:
                     axis = inp[1]
                     self.dc = self.map(axis)
                     self.pwm.ChangeDutyCycle(self.dc)
-                    print "[Servo] Dutycycle changed to ", axis,",", self.dc
+                    if self.verbose: print "[Servo] Dutycycle changed to ", axis,",", self.dc
             except:
                 time.sleep(0.001)
                 pass

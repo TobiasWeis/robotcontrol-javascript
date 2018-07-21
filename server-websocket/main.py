@@ -8,6 +8,8 @@ from flask_cors import CORS
 import math
 from multiprocessing import Process, Queue
 
+_debug = False
+
 ql = Queue()
 qs = Queue()
 qs2 = Queue()
@@ -16,20 +18,20 @@ qb2 = Queue()
 
 try:
     from robot.Linear import *
-    linear = Linear(ql)
+    linear = Linear(ql, verbose=False)
     linear.start()
 
     from robot.Servo import *
-    servo = Servo(qs, 7)
+    servo = Servo(qs, 7, verbose=False)
     servo.start()
-    servo2 = Servo(qs2, 11)
+    servo2 = Servo(qs2, 11, verbose=False)
     servo2.start()
 
     from robot.Binary import *
-    binary = Binary(qb, 13, axis="A")
+    binary = Binary(qb, 13, axis="A", verbose=False)
     binary.start()
 
-    binary2 = Binary(qb2,15, axis="B")
+    binary2 = Binary(qb2,15, axis="B", verbose=False)
     binary2.start()
 except Exception, e:
     print("Could not import robot")
@@ -57,20 +59,6 @@ def map_dist_angle(distance, angle):
 def index():
     return render_template('index.html')
 
-
-@socketio.on('request', namespace='/status')
-def send_status():
-    print "send_status"
-    emit('status', {'data':"Here could be your status"})
-
-@socketio.on('connect', namespace='/status')
-def connect_status():
-    print "Status connected"
-
-@socketio.on('connect', namespace='/control')
-def connect_status():
-    print "Control connected"
-
 @socketio.on_error_default
 def default_error_handler(e):
     print "======================= ERROR"
@@ -79,27 +67,24 @@ def default_error_handler(e):
 
 @socketio.on('control', namespace='/control')
 def control(message):
-    print "control"
     data = message["data"]
-    print data
     if "left" in data.keys():
         x = data["left"][0]
         y = data["left"][1]
-        print "Left: ",x,",",y
+        if _debug: print "[Server] Left: ",x,",",y
         ql.put(("left",x,y))
     elif "right" in data.keys():
         x = data["right"][0]
         y = data["right"][1]
-        print "Right: ",x,",",y
+        if _debug: print "[Server] Right: ",x,",",y
         qs.put(("right",x,y))
         qs2.put(("right",y,x))
     elif "A" in data.keys():
-        print "A"
+        if _debug: print "[Server] A"
         qb.put(("A",1,0))
     elif "B" in data.keys():
-        print "B"
+        if _debug: print "[Server] B"
         qb2.put(("B",1,0))
 
 if __name__ == "__main__":
-    #app.run(debug=True, host='0.0.0.0')
-    socketio.run(app, host="0.0.0.0", debug=True)
+    socketio.run(app, host="0.0.0.0", debug=True, use_reloader=False)
