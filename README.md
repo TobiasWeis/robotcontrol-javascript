@@ -1,6 +1,12 @@
 # robotcontrol-javascript
 interactive control interface for robots and other electronics experiments
 
+this software provides
+* an interactive GUI served as a webpage
+* a server that runs on a robot (raspberry pi)
+* a two-way websocket connection for low latency control
+* some server-side robot-classes (servo-, stepper-, toggle-control) that are already mapped to control inputs
+
 ## requirements
 * python, numpy, flask
 
