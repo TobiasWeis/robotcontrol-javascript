@@ -7,6 +7,10 @@ this software provides
 * a two-way websocket connection for low latency control
 * some server-side robot-classes (servo-, stepper-, toggle-control) that are already mapped to control inputs
 
+_Important_: The GUI can currently only be controlled using touch-events, that means it should be used with a touchscreen device.
+
+Tested on raspberry pi 3 b+ with raspbian and Samsung Galaxy S7, Android 8, mobile google chrome 67.
+
 ## requirements
 * python, numpy, flask
 
