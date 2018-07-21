@@ -2,11 +2,10 @@
 """
 We are using a small REST server to control our robot.
 """
-from flask import Flask, jsonify
+from flask import Flask, render_template
 from flask_socketio import SocketIO, emit
 from flask_cors import CORS
 import math
-import json
 from multiprocessing import Process, Queue
 
 ql = Queue()
@@ -16,29 +15,29 @@ qb = Queue()
 qb2 = Queue()
 
 try:
-    from Linear import *
+    from robot.Linear import *
     linear = Linear(ql)
     linear.start()
 
-    from Servo import *
+    from robot.Servo import *
     servo = Servo(qs, 7)
     servo.start()
     servo2 = Servo(qs2, 11)
     servo2.start()
 
-    from Binary import *
+    from robot.Binary import *
     binary = Binary(qb, 13, axis="A")
     binary.start()
 
     binary2 = Binary(qb2,15, axis="B")
     binary2.start()
-
 except Exception, e:
     print("Could not import robot")
     print e
 
 
 app = Flask(__name__)
+app.config['SECRET_KEY'] = 'secret'
 CORS(app)
 socketio = SocketIO(app)
 
@@ -56,66 +55,51 @@ def map_dist_angle(distance, angle):
 
 @app.route('/')
 def index():
-    return "Robot-Control"
+    return render_template('index.html')
 
-"""
-@socketio.on('connect', namespace='/test')
-def test_connect():
-    emit('my response', {'data':'Connected'})
-
-@socketio.on('disconnect', namespace='/test')
-def test_disconnect():
-    print('Client disconnected')
-"""
 
 @socketio.on('request', namespace='/status')
 def send_status():
+    print "send_status"
     emit('status', {'data':"Here could be your status"})
 
+@socketio.on('connect', namespace='/status')
+def connect_status():
+    print "Status connected"
+
+@socketio.on('connect', namespace='/control')
+def connect_status():
+    print "Control connected"
+
+@socketio.on_error_default
+def default_error_handler(e):
+    print "======================= ERROR"
+    print(request.event["message"]) # "my error event"
+    print(request.event["args"])    # (data,)"
 
 @socketio.on('control', namespace='/control')
 def control(message):
+    print "control"
     data = message["data"]
+    print data
     if "left" in data.keys():
         x = data["left"][0]
         y = data["left"][1]
-        ql.put(("left",x,y))
         print "Left: ",x,",",y
+        ql.put(("left",x,y))
     elif "right" in data.keys():
         x = data["right"][0]
         y = data["right"][1]
+        print "Right: ",x,",",y
         qs.put(("right",x,y))
         qs2.put(("right",y,x))
-        print "Right: ",x,",",y
     elif "A" in data.keys():
-        qb.put(("A",1,0))
         print "A"
+        qb.put(("A",1,0))
     elif "B" in data.keys():
-        qb2.put(("B",1,0))
         print "B"
-
-@app.route('/axis/<num>/<distance>/<angle>')
-def left(num,distance,angle):
-    """
-    inputs of the virtual joysticks
-    - when the user lets go of it, it will send a 0,0
-
-    """
-    x,y = map_dist_angle(float(distance), float(angle))
-
-    # put it in queue for Robot-class to receive
-    q.put(x)
-
-    ret = "OK"
-    return jsonify(ret)
-
-@app.route('/status')
-def status():
-    status = {}
-    status["Test1"] = "test1"
-    status["Test2"] = "test2"
-    return jsonify(status)
+        qb2.put(("B",1,0))
 
 if __name__ == "__main__":
     #app.run(debug=True, host='0.0.0.0')
-    socketio.run(app, host="0.0.0.0")
+    socketio.run(app, host="0.0.0.0", debug=True)

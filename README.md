@@ -2,11 +2,8 @@
 interactive control interface for robots and other electronics experiments
 
 ## requirements
-python, numpy, flask, some server (apache or other) to serve the interface
+* python, numpy, flask
 
 ## howto run
-* run flask-server (server/main.py)
-* call interface webpage in browser
-
-## TODO
-* check https://forum.poppy-project.org/t/flask-quick-web-interface-for-robots/2217/6
+* run flask-server (server/main.py) -> this will provide the websocket API and serve the webpage on port 5000 
+* call interface webpage in browser: http://server-ip:5000
