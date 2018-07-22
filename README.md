@@ -21,8 +21,14 @@ Tested on RaspberryPi 3 B+ with raspbian and Samsung Galaxy S7, Android 8, mobil
 * python, numpy, flask
 
 ## howto run
-* install necessary python-packages using pip ```pip install -r requirements.txt´´´
+* install necessary python-packages using pip 
+```
+pip install -r requirements.txt
+```
 * run flask-server (server-websocket/main.py) -> this will provide the websocket API and serve the webpage on port 5000 
+```
+./server-websocket/main.py
+```
 * call interface webpage in browser: http://server-ip:5000
 
 ## TODO
