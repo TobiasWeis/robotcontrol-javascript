@@ -2,6 +2,8 @@
 
 Interactive, low-latency javascript-based websocket-GUI for touch-devices
 with a python-flask backend that interfaces to robotic components.
+It provides virtual 2-axis joysticks (inspired by nipple.js but without the multitouch issues) and buttons
+that all work simulatenously. Due to the two-way websocket connection, status-messages from the robot can be displayed in the text-area.
 
 ![Gif of GUI](media/robotcontrol.gif)
 
