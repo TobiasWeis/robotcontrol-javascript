@@ -1,6 +1,8 @@
 # robotcontrol-javascript
 interactive control interface for robots and other electronics experiments
 
+![Gif of GUI](media/robotcontrol.gif)
+
 this software provides
 * an interactive GUI served as a webpage
 * a server that runs on a robot (raspberry pi)
