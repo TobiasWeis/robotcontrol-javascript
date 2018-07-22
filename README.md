@@ -17,10 +17,10 @@ _Important_: The GUI can currently only be controlled using touch-events, that m
 
 Tested on RaspberryPi 3 B+ with raspbian and Samsung Galaxy S7, Android 8, mobile google chrome 67.
 
-## requirements
+## Requirements
 * python, numpy, flask
 
-## howto run
+## Howto run
 * install necessary python-packages using pip 
 ```
 pip install -r requirements.txt
@@ -31,9 +31,11 @@ pip install -r requirements.txt
 ```
 * call interface webpage in browser: http://server-ip:5000
 
-## some more technical details
+## Module architecture 
 
 ![Module structure](media/ModuleDiagram.png)
+
+## Hardware test-setup
 
 ![Hardware layout](media/TestSketch.png)
 
