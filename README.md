@@ -31,5 +31,11 @@ pip install -r requirements.txt
 ```
 * call interface webpage in browser: http://server-ip:5000
 
+## some more technical details
+
+![Module structure](media/ModuleDiagram.png)
+
+![Hardware layout](media/TestSketch.png)
+
 ## TODO
 * unify control-interface to allow easier mapping of interface-axis/buttons to robot actions
