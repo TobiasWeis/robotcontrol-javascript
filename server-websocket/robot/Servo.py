@@ -5,9 +5,9 @@
 0.9 deg step angle - 400 steps
 """
 import time
-import numpy as np
 from multiprocessing import Process, Queue 
 import RPi.GPIO as GPIO
+
 
 class Servo:
     def __init__(self, queue, pin, verbose="False"):
@@ -16,7 +16,7 @@ class Servo:
         self.verbose = verbose
 
     def start(self):
-        self.p = Process(target=self.run, args=((self.q),))
+        self.p = Process(target=self.run, args=(self.q,))
         self.p.start()
 
     def map(self, value):
@@ -36,7 +36,7 @@ class Servo:
         return value * 100
 
     def run(self, queue):
-        inp = (0,0,0)
+        inp = (0, 0, 0)
         GPIO.setwarnings(False)
         GPIO.setmode(GPIO.BOARD)
         GPIO.setup(self.servopin, GPIO.OUT) # step
@@ -51,15 +51,16 @@ class Servo:
                     axis = inp[1]
                     self.dc = self.map(axis)
                     self.pwm.ChangeDutyCycle(self.dc)
-                    if self.verbose: print "[Servo] Dutycycle changed to ", axis,",", self.dc
+                    if self.verbose: print("[Servo] Dutycycle changed to ", axis,",", self.dc)
             except:
                 time.sleep(0.001)
                 pass
 
+
 if __name__ == "__main__":
     GPIO.setmode(GPIO.BOARD)
 
-    GPIO.setup(7, GPIO.OUT) # step
+    GPIO.setup(7, GPIO.OUT)  # step
     pwm = GPIO.PWM(7, 50)
     pwm.start(0)
 

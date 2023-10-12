@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 """
 We are using a small REST server to control our robot.
 """
@@ -30,9 +30,9 @@ try:
 
     binary2 = Binary(Queue(),15, axis="B", verbose=False)
     binary2.start()
-except Exception, e:
+except Exception as e:
     print("Could not import robot")
-    print e
+    print(e)
 
 
 app = Flask(__name__)
@@ -48,7 +48,7 @@ def index():
 
 @socketio.on_error_default
 def default_error_handler(e):
-    print "======================= ERROR"
+    print("======================= ERROR")
     print(request.event["message"])
     print(request.event["args"])
 
@@ -59,19 +59,19 @@ def control(message):
     if "left" in data.keys():
         x = data["left"][0]
         y = data["left"][1]
-        if _debug: print "[Server] Left: ",x,",",y
+        if _debug: print("[Server] Left: ",x,",",y)
         linear.q.put(("left",x,y))
     elif "right" in data.keys():
         x = data["right"][0]
         y = data["right"][1]
-        if _debug: print "[Server] Right: ",x,",",y
+        if _debug: print("[Server] Right: ",x,",",y)
         servo.q.put(("right",x,y))
         servo2.q.put(("right",y,x))
     elif "A" in data.keys():
-        if _debug: print "[Server] A"
+        if _debug: print("[Server] A")
         binary.q.put(("A",1,0))
     elif "B" in data.keys():
-        if _debug: print "[Server] B"
+        if _debug: print("[Server] B")
         binary2.q.put(("B",1,0))
 
 if __name__ == "__main__":

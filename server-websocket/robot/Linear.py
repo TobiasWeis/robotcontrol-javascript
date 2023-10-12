@@ -9,6 +9,7 @@ import numpy as np
 from multiprocessing import Process
 import RPi.GPIO as GPIO
 
+
 class Linear:
     def __init__(self, queue, verbose="False"):
         self.q = queue
@@ -16,13 +17,13 @@ class Linear:
 
         self.numsteps = 400
         self.microstep = 16
-        self.actual_steps=self.numsteps * self.microstep
+        self.actual_steps = self.numsteps * self.microstep
 
         GPIO.setwarnings(False)
         GPIO.setmode(GPIO.BOARD)
 
-        GPIO.setup(3, GPIO.OUT) # step
-        GPIO.setup(5, GPIO.OUT) # dir
+        GPIO.setup(3, GPIO.OUT)  # step
+        GPIO.setup(5, GPIO.OUT)  # dir
         GPIO.output(3, GPIO.LOW)
 
         self.position = 0
@@ -30,7 +31,7 @@ class Linear:
         self.direction = 0
 
     def start(self):
-        self.p = Process(target=self.run, args=((self.q),))
+        self.p = Process(target=self.run, args=(self.q,))
         self.p.start()
 
     def run(self, queue):
@@ -58,7 +59,7 @@ class Linear:
                 self.speed_rpm = 100
                 self.num_steps_per_sec=self.speed_rpm*self.actual_steps/60.0
                 self.interval = 1.0/self.num_steps_per_sec
-                if self.verbose: print "Interval: ", self.interval
+                if self.verbose: print("Interval: ", self.interval)
 
                 for i in range(10):
                     GPIO.output(3, GPIO.HIGH)

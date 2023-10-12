@@ -1,3 +1,5 @@
+numpy
 gevent-websocket
 Flask-Cors
 flask-socketio
+RPi.GPIO

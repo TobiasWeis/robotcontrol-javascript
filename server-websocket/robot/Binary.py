@@ -5,8 +5,7 @@
 0.9 deg step angle - 400 steps
 """
 import time
-import numpy as np
-from multiprocessing import Process, Queue 
+from multiprocessing import Process
 import RPi.GPIO as GPIO
 
 class Binary:
@@ -16,11 +15,11 @@ class Binary:
         self.state = 0
         self.debounce_time = 0.2
         self.last_button_ts = 0
-        self.axis=axis
+        self.axis = axis
         self.verbose = verbose
 
     def start(self):
-        self.p = Process(target=self.run, args=((self.q),))
+        self.p = Process(target=self.run, args=(self.q,))
         self.p.start()
 
     def run(self, queue):
@@ -33,20 +32,21 @@ class Binary:
         while True:
             try:
                 inp = queue.get_nowait()
-                if self.verbose: print inp
+                if self.verbose: print(inp)
                 if inp[0] == self.axis and time.time() - self.last_button_ts > self.debounce_time:
                     self.state = (self.state + 1) % 2
-                    if self.verbose: print "[Binary] Changed state to", self.state
+                    if self.verbose: print("[Binary] Changed state to", self.state)
                     GPIO.output(self.pin, self.state)
                     self.last_button_ts = time.time()
             except:
                 time.sleep(0.01)
                 pass
 
+
 if __name__ == "__main__":
     GPIO.setmode(GPIO.BOARD)
 
-    GPIO.setup(7, GPIO.OUT) # step
+    GPIO.setup(7, GPIO.OUT)  # step
     pwm = GPIO.PWM(7, 50)
     pwm.start(0)
 
